@@ -12,10 +12,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ============================================================
 
 SECRET_KEY = "django-insecure-change-this-later"
-
-DEBUG = True
-
-ALLOWED_HOSTS = []
+DEBUG = False
+ALLOWED_HOSTS = ["sportsnews-9zqa.onrender.com"]
 
 
 # ============================================================
