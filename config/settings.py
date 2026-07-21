@@ -1,19 +1,20 @@
 from pathlib import Path
-
-# ============================================================
-# BASE DIRECTORY
-# ============================================================
+import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = environ.Env(
+    DEBUG=(bool, True),
+)
 
-# ============================================================
-# SECURITY
-# ============================================================
+environ.Env.read_env(BASE_DIR / ".env")
 
-SECRET_KEY = "django-insecure-change-this-later"
+SECRET_KEY = env(
+    "SECRET_KEY",
+    default="django-insecure-local-development-key-change-in-production",
+)
 
-DEBUG = True
+DEBUG = env("DEBUG", default=True)
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
@@ -21,13 +22,7 @@ ALLOWED_HOSTS = [
     "sportsnews-stxa.onrender.com",
 ]
 
-
-# ============================================================
-# APPLICATIONS
-# ============================================================
-
 INSTALLED_APPS = [
-    # Django
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -35,23 +30,15 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # Third-party
     "crispy_forms",
     "crispy_bootstrap5",
 
-    # Our apps
     "news",
-    "accounts",
-    "analytics",
 ]
-
-
-# ============================================================
-# MIDDLEWARE
-# ============================================================
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -60,28 +47,15 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-
-# ============================================================
-# URL CONFIGURATION
-# ============================================================
-
 ROOT_URLCONF = "config.urls"
-
-
-# ============================================================
-# TEMPLATES
-# ============================================================
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-
         "DIRS": [
             BASE_DIR / "templates",
         ],
-
         "APP_DIRS": True,
-
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.request",
@@ -92,29 +66,21 @@ TEMPLATES = [
     },
 ]
 
-
-# ============================================================
-# WSGI
-# ============================================================
-
 WSGI_APPLICATION = "config.wsgi.application"
 
+DATABASE_URL = env("DATABASE_URL", default="")
 
-# ============================================================
-# DATABASE
-# ============================================================
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+if DATABASE_URL:
+    DATABASES = {
+        "default": env.db("DATABASE_URL"),
     }
-}
-
-
-# ============================================================
-# PASSWORD VALIDATION
-# ============================================================
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -131,11 +97,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# ============================================================
-# INTERNATIONALIZATION
-# ============================================================
-
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "Asia/Karachi"
@@ -144,12 +105,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# ============================================================
-# STATIC FILES
-# ============================================================
-
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
@@ -157,38 +113,21 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-
-# ============================================================
-# MEDIA FILES
-# ============================================================
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 MEDIA_URL = "/media/"
 
 MEDIA_ROOT = BASE_DIR / "media"
 
-
-# ============================================================
-# CRISPY FORMS
-# ============================================================
-
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
-
-
-# ============================================================
-# LOGIN / LOGOUT
-# ============================================================
-
-LOGIN_URL = "/accounts/login/"
-
-LOGIN_REDIRECT_URL = "/"
-
-LOGOUT_REDIRECT_URL = "/"
-
-
-# ============================================================
-# DEFAULT PRIMARY KEY
-# ============================================================
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
