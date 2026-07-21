@@ -1,0 +1,530 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+
+{% block title %}
+
+SportsNews | Latest Sports News
+
+{% endblock %}
+
+
+{% block description %}
+
+Latest sports news, breaking news, cricket, football, tennis, basketball and international sports updates.
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="container main-container">
+
+
+    <!-- =====================================================
+         HERO SECTION
+         ===================================================== -->
+
+    {% if featured_articles %}
+
+    <section class="hero-section">
+
+        <div class="hero-grid">
+
+
+            <!-- MAIN FEATURED ARTICLE -->
+
+            <div class="hero-main">
+
+                {% with article=featured_articles.0 %}
+
+
+                    {% if article.featured_image %}
+
+                    <img
+                        src="{{ article.featured_image.url }}"
+                        alt="{{ article.title }}"
+                    >
+
+                    {% endif %}
+
+
+                    <div class="hero-overlay">
+
+
+                        {% if article.category %}
+
+                        <span class="category-badge">
+
+                            {{ article.category.name }}
+
+                        </span>
+
+                        {% endif %}
+
+
+                        <h1>
+
+                            <a
+                                href="{% url 'news:article_detail' article.slug %}"
+                            >
+
+                                {{ article.title }}
+
+                            </a>
+
+                        </h1>
+
+
+                        <p>
+
+                            {{ article.excerpt }}
+
+                        </p>
+
+
+                        <div class="article-meta">
+
+
+                            {% if article.author %}
+
+                            By
+                            {{ article.author.display_name }}
+
+                            |
+
+                            {% endif %}
+
+
+                            {% if article.published_at %}
+
+                            {{ article.published_at|date:"M d, Y" }}
+
+                            {% endif %}
+
+
+                            |
+
+                            {{ article.views }} views
+
+
+                        </div>
+
+
+                    </div>
+
+
+                {% endwith %}
+
+            </div>
+
+
+
+            <!-- SIDE FEATURED ARTICLES -->
+
+            <div class="hero-side">
+
+
+                {% for article in featured_articles|slice:"1:4" %}
+
+
+                <article class="side-card">
+
+
+                    {% if article.featured_image %}
+
+                    <a
+                        href="{% url 'news:article_detail' article.slug %}"
+                    >
+
+                        <img
+                            src="{{ article.featured_image.url }}"
+                            alt="{{ article.title }}"
+                        >
+
+                    </a>
+
+                    {% endif %}
+
+
+                    <div class="side-card-content">
+
+
+                        {% if article.category %}
+
+                        <span class="category-badge small">
+
+                            {{ article.category.name }}
+
+                        </span>
+
+                        {% endif %}
+
+
+                        <h3>
+
+                            <a
+                                href="{% url 'news:article_detail' article.slug %}"
+                            >
+
+                                {{ article.title }}
+
+                            </a>
+
+                        </h3>
+
+
+                        <div class="article-meta">
+
+                            {{ article.views }} views
+
+                        </div>
+
+
+                    </div>
+
+
+                </article>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+
+    <!-- =====================================================
+         LATEST NEWS
+         ===================================================== -->
+
+    <section class="content-section">
+
+
+        <div class="section-title">
+
+            <h2>
+                Latest News
+            </h2>
+
+            <span></span>
+
+        </div>
+
+
+
+        <div class="news-layout">
+
+
+            <!-- NEWS GRID -->
+
+            <div class="news-grid">
+
+
+                {% for article in latest_articles %}
+
+
+                <article class="news-card">
+
+
+                    <!-- IMAGE -->
+
+                    {% if article.featured_image %}
+
+                    <a
+                        href="{% url 'news:article_detail' article.slug %}"
+                    >
+
+                        <img
+                            src="{{ article.featured_image.url }}"
+                            alt="{{ article.title }}"
+                        >
+
+                    </a>
+
+
+                    {% else %}
+
+
+                    <a
+                        href="{% url 'news:article_detail' article.slug %}"
+                    >
+
+                        <div class="image-placeholder">
+
+                            SPORTSNEWS
+
+                        </div>
+
+                    </a>
+
+
+                    {% endif %}
+
+
+
+                    <!-- CARD BODY -->
+
+                    <div class="news-card-body">
+
+
+                        {% if article.category %}
+
+                        <span class="category-badge">
+
+                            {{ article.category.name }}
+
+                        </span>
+
+                        {% endif %}
+
+
+
+                        <h3>
+
+                            <a
+                                href="{% url 'news:article_detail' article.slug %}"
+                            >
+
+                                {{ article.title }}
+
+                            </a>
+
+                        </h3>
+
+
+
+                        <p>
+
+                            {{ article.excerpt|truncatechars:120 }}
+
+                        </p>
+
+
+
+                        <div class="article-meta">
+
+
+                            {% if article.author %}
+
+                            By
+                            {{ article.author.display_name }}
+
+                            |
+
+                            {% endif %}
+
+
+                            {% if article.published_at %}
+
+                            {{ article.published_at|date:"M d, Y" }}
+
+                            |
+
+                            {% endif %}
+
+
+                            {{ article.views }} views
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </article>
+
+
+                {% empty %}
+
+
+                <div class="empty-state">
+
+                    <h3>
+                        No articles yet
+                    </h3>
+
+                    <p>
+                        Add your first published article from the admin panel.
+                    </p>
+
+                </div>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 TRENDING SIDEBAR
+                 ================================================= -->
+
+            <aside class="trending-sidebar">
+
+
+                <div class="section-title">
+
+                    <h2>
+                        Trending
+                    </h2>
+
+                </div>
+
+
+
+                {% for article in trending_articles %}
+
+
+                <article class="trending-item">
+
+
+                    <div class="trending-number">
+
+                        {{ forloop.counter }}
+
+                    </div>
+
+
+
+                    <div>
+
+
+                        <h4>
+
+                            <a
+                                href="{% url 'news:article_detail' article.slug %}"
+                            >
+
+                                {{ article.title }}
+
+                            </a>
+
+                        </h4>
+
+
+                        <small>
+
+                            {{ article.views }} views
+
+                        </small>
+
+
+                    </div>
+
+
+                </article>
+
+
+                {% empty %}
+
+
+                <p>
+                    No trending articles yet.
+                </p>
+
+
+                {% endfor %}
+
+
+            </aside>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         SPORTS CATEGORIES
+         ===================================================== -->
+
+    <section class="categories-section">
+
+
+        <div class="section-title">
+
+            <h2>
+                Sports
+            </h2>
+
+            <span></span>
+
+        </div>
+
+
+
+        <div class="category-grid">
+
+
+            {% for category in categories %}
+
+
+            <a
+                href="#"
+                class="category-card"
+            >
+
+
+                {% if category.image %}
+
+                <img
+                    src="{{ category.image.url }}"
+                    alt="{{ category.name }}"
+                >
+
+                {% endif %}
+
+
+                <div>
+
+                    {{ category.name }}
+
+                </div>
+
+
+            </a>
+
+
+            {% empty %}
+
+
+            <div class="empty-state">
+
+                <h3>
+                    No categories yet
+                </h3>
+
+                <p>
+                    Add sports categories from the admin panel.
+                </p>
+
+            </div>
+
+
+            {% endfor %}
+
+
+        </div>
+
+
+    </section>
+
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,388 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}
+        SportsNews
+        {% endblock %}
+    </title>
+
+    <meta
+        name="description"
+        content="{% block description %}Latest sports news, breaking news, scores and updates.{% endblock %}"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     TOP BAR
+     ===================================================== -->
+
+<div class="top-bar">
+
+    <div class="container">
+
+        <div class="top-content">
+
+            <span>
+                Latest Sports News
+            </span>
+
+            <span>
+                Monday, August 10, 2026
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     MAIN HEADER
+     ===================================================== -->
+
+<header class="main-header">
+
+    <div class="container">
+
+        <div class="header-content">
+
+
+            <!-- LOGO -->
+
+            <a
+                href="{% url 'news:home' %}"
+                class="logo"
+            >
+
+                SPORTS<span>NEWS</span>
+
+            </a>
+
+
+
+            <!-- HEADER RIGHT -->
+
+            <div class="header-right">
+
+
+                <!-- SEARCH -->
+
+                <form
+                    method="GET"
+                    action="{% url 'news:search' %}"
+                    class="header-search"
+                >
+
+                    <input
+                        type="text"
+                        name="q"
+                        placeholder="Search..."
+                        autocomplete="off"
+                    >
+
+                    <button type="submit">
+                        🔍
+                    </button>
+
+                </form>
+
+
+
+                <!-- ADMIN -->
+
+                <a
+                    href="/admin/"
+                    class="admin-link"
+                >
+
+                    Admin
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<!-- =====================================================
+     NAVIGATION
+     ===================================================== -->
+
+<nav class="main-nav">
+
+    <div class="container">
+
+        <div class="nav-wrapper">
+
+
+            <!-- HOME -->
+
+            <a
+                href="{% url 'news:home' %}"
+            >
+
+                Home
+
+            </a>
+
+
+
+            <!-- DYNAMIC CATEGORIES -->
+
+            {% for category in categories %}
+
+                <a
+                    href="{% url 'news:category' category.slug %}"
+                >
+
+                    {{ category.name }}
+
+                </a>
+
+            {% endfor %}
+
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+
+<!-- =====================================================
+     BREAKING NEWS
+     ===================================================== -->
+
+{% if breaking_articles %}
+
+<div class="breaking-bar">
+
+    <div class="container">
+
+        <div class="breaking-wrapper">
+
+
+            <span class="breaking-label">
+
+                BREAKING
+
+            </span>
+
+
+            <div class="breaking-news">
+
+
+                {% for article in breaking_articles %}
+
+                    <a
+                        href="{% url 'news:article_detail' article.slug %}"
+                    >
+
+                        {{ article.title }}
+
+                    </a>
+
+                {% endfor %}
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+
+<!-- =====================================================
+     MAIN CONTENT
+     ===================================================== -->
+
+<main>
+
+    {% block content %}
+
+    {% endblock %}
+
+</main>
+
+
+
+<!-- =====================================================
+     FOOTER
+     ===================================================== -->
+
+<footer class="footer">
+
+    <div class="container">
+
+        <div class="footer-grid">
+
+
+            <!-- ABOUT -->
+
+            <div>
+
+                <div class="footer-logo">
+
+                    SPORTSNEWS
+
+                </div>
+
+
+                <p>
+
+                    Your trusted source for the latest
+                    sports news, scores and updates.
+
+                </p>
+
+            </div>
+
+
+
+            <!-- SPORTS -->
+
+            <div>
+
+                <h5>
+                    Sports
+                </h5>
+
+
+                {% for category in categories %}
+
+                    <a
+                        href="{% url 'news:category' category.slug %}"
+                    >
+
+                        {{ category.name }}
+
+                    </a>
+
+                {% endfor %}
+
+
+            </div>
+
+
+
+            <!-- QUICK LINKS -->
+
+            <div>
+
+                <h5>
+                    Quick Links
+                </h5>
+
+
+                <a
+                    href="{% url 'news:home' %}"
+                >
+
+                    Latest News
+
+                </a>
+
+
+                {% if trending_articles %}
+
+                    <a
+                        href="#trending"
+                    >
+
+                        Trending
+
+                    </a>
+
+                {% endif %}
+
+
+                <a href="#">
+                    About Us
+                </a>
+
+
+                <a href="#">
+                    Contact
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="footer-bottom">
+
+            © 2026 SportsNews. All Rights Reserved.
+
+        </div>
+
+
+    </div>
+
+</footer>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
+
+<script
+    src="{% static 'js/main.js' %}"
+></script>
+
+
+</body>
+
+</html>

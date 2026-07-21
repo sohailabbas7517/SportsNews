@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ article.meta_title|default:article.title }} | SportsNews
+{% endblock %}
+
+{% block description %}
+{{ article.meta_description|default:article.excerpt }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-9">
+
+        <article>
+
+            <!-- CATEGORY -->
+
+            {% if article.category %}
+
+                <div class="mb-3">
+
+                    <a
+                        href="{% url 'news:category' article.category.slug %}"
+                        class="text-decoration-none"
+                    >
+
+                        <span class="badge bg-primary px-3 py-2">
+
+                            {{ article.category.name }}
+
+                        </span>
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- TITLE -->
+
+            <h1 class="display-4 fw-bold mb-3">
+
+                {{ article.title }}
+
+            </h1>
+
+
+            <!-- ARTICLE META -->
+
+            <div class="text-muted mb-4">
+
+                {% if article.author %}
+
+                    <span>
+
+                        By
+                        <strong>
+                            {{ article.author.display_name }}
+                        </strong>
+
+                    </span>
+
+                {% endif %}
+
+
+                {% if article.published_at %}
+
+                    <span>
+
+                        &nbsp; | &nbsp;
+
+                        {{ article.published_at|date:"F d, Y" }}
+
+                    </span>
+
+                {% endif %}
+
+
+                <span>
+
+                    &nbsp; | &nbsp;
+
+                    {{ article.views }} views
+
+                </span>
+
+            </div>
+
+
+            <!-- FEATURED IMAGE -->
+
+            {% if article.featured_image %}
+
+                <div class="mb-5">
+
+                    <img
+                        src="{{ article.featured_image.url }}"
+                        alt="{{ article.title }}"
+                        class="img-fluid w-100"
+                        style="
+                            max-height: 600px;
+                            object-fit: cover;
+                            border-radius: 14px;
+                            display: block;
+                        "
+                    >
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- EXCERPT -->
+
+            {% if article.excerpt %}
+
+                <div class="mb-4">
+
+                    <p class="lead fw-semibold">
+
+                        {{ article.excerpt }}
+
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- ARTICLE CONTENT -->
+
+            <div
+                class="article-content"
+                style="
+                    font-size: 18px;
+                    line-height: 1.9;
+                "
+            >
+
+                {{ article.content|linebreaks }}
+
+            </div>
+
+        </article>
+
+    </div>
+
+</div>
+
+
+</div>
+
+{% endblock %}

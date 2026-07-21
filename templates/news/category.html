@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ category.name }} News | SportsNews
+{% endblock %}
+
+{% block description %}
+Latest {{ category.name }} news, updates, scores and breaking stories.
+{% endblock %}
+
+{% block content %}
+
+<div class="container main-container">
+
+    <!-- CATEGORY HEADER -->
+
+    <div class="section-title">
+
+        <h2>
+            {{ category.name }} News
+        </h2>
+
+        <span></span>
+
+    </div>
+
+
+    {% if category.description %}
+
+        <p
+            style="
+                color:#6b7280;
+                font-size:16px;
+                line-height:1.6;
+                margin-bottom:25px;
+            "
+        >
+            {{ category.description }}
+        </p>
+
+    {% endif %}
+
+
+
+    <!-- CATEGORY NEWS -->
+
+    <div class="news-layout">
+
+
+        <!-- ARTICLES -->
+
+        <div>
+
+            {% if articles %}
+
+                <div class="news-grid">
+
+                    {% for article in articles %}
+
+                        <article class="news-card">
+
+                            {% if article.featured_image %}
+
+                                <a
+                                    href="{% url 'news:article_detail' article.slug %}"
+                                >
+
+                                    <img
+                                        src="{{ article.featured_image.url }}"
+                                        alt="{{ article.title }}"
+                                    >
+
+                                </a>
+
+                            {% else %}
+
+                                <a
+                                    href="{% url 'news:article_detail' article.slug %}"
+                                >
+
+                                    <div class="image-placeholder">
+                                        SPORTSNEWS
+                                    </div>
+
+                                </a>
+
+                            {% endif %}
+
+
+                            <div class="news-card-body">
+
+
+                                {% if article.category %}
+
+                                    <span class="category-badge">
+
+                                        {{ article.category.name }}
+
+                                    </span>
+
+                                {% endif %}
+
+
+                                <h3>
+
+                                    <a
+                                        href="{% url 'news:article_detail' article.slug %}"
+                                    >
+
+                                        {{ article.title }}
+
+                                    </a>
+
+                                </h3>
+
+
+                                {% if article.excerpt %}
+
+                                    <p>
+
+                                        {{ article.excerpt }}
+
+                                    </p>
+
+                                {% endif %}
+
+
+                                <div class="article-meta">
+
+                                    {% if article.author %}
+                                        {{ article.author.display_name }}
+                                    {% endif %}
+
+                                    {% if article.published_at %}
+                                        ·
+                                        {{ article.published_at|date:"M d, Y" }}
+                                    {% endif %}
+
+                                    ·
+
+                                    {{ article.views }} views
+
+                                </div>
+
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- PAGINATION -->
+
+                {% if page_obj.paginator.num_pages > 1 %}
+
+                    <div
+                        style="
+                            display:flex;
+                            justify-content:center;
+                            align-items:center;
+                            gap:8px;
+                            margin-top:35px;
+                            flex-wrap:wrap;
+                        "
+                    >
+
+
+                        {% if page_obj.has_previous %}
+
+                            <a
+                                href="?page={{ page_obj.previous_page_number }}"
+                                style="
+                                    padding:9px 16px;
+                                    background:#111827;
+                                    color:#ffffff;
+                                    border-radius:6px;
+                                    font-size:14px;
+                                    font-weight:700;
+                                "
+                            >
+
+                                ← Previous
+
+                            </a>
+
+                        {% endif %}
+
+
+
+                        {% for num in page_obj.paginator.page_range %}
+
+                            {% if page_obj.number == num %}
+
+                                <span
+                                    style="
+                                        padding:9px 13px;
+                                        background:#e11d48;
+                                        color:#ffffff;
+                                        border-radius:6px;
+                                        font-size:14px;
+                                        font-weight:700;
+                                    "
+                                >
+
+                                    {{ num }}
+
+                                </span>
+
+                            {% else %}
+
+                                <a
+                                    href="?page={{ num }}"
+                                    style="
+                                        padding:9px 13px;
+                                        background:#ffffff;
+                                        color:#111827;
+                                        border:1px solid #e5e7eb;
+                                        border-radius:6px;
+                                        font-size:14px;
+                                        font-weight:700;
+                                    "
+                                >
+
+                                    {{ num }}
+
+                                </a>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+
+
+                        {% if page_obj.has_next %}
+
+                            <a
+                                href="?page={{ page_obj.next_page_number }}"
+                                style="
+                                    padding:9px 16px;
+                                    background:#111827;
+                                    color:#ffffff;
+                                    border-radius:6px;
+                                    font-size:14px;
+                                    font-weight:700;
+                                "
+                            >
+
+                                Next →
+
+                            </a>
+
+                        {% endif %}
+
+
+                    </div>
+
+                {% endif %}
+
+
+            {% else %}
+
+
+                <!-- NO ARTICLES -->
+
+                <div class="empty-state">
+
+                    <h3>
+                        No {{ category.name }} News Yet
+                    </h3>
+
+                    <p>
+                        There are currently no published articles
+                        in this category.
+                    </p>
+
+                </div>
+
+
+            {% endif %}
+
+        </div>
+
+
+
+        <!-- TRENDING SIDEBAR -->
+
+        <aside class="trending-sidebar">
+
+            <div class="section-title">
+
+                <h2 style="font-size:22px;">
+                    Trending
+                </h2>
+
+            </div>
+
+
+            {% for article in trending_articles %}
+
+                <div class="trending-item">
+
+                    <div class="trending-number">
+
+                        {{ forloop.counter }}
+
+                    </div>
+
+
+                    <div>
+
+                        <h4>
+
+                            <a
+                                href="{% url 'news:article_detail' article.slug %}"
+                            >
+
+                                {{ article.title }}
+
+                            </a>
+
+                        </h4>
+
+
+                        <small>
+
+                            {{ article.views }} views
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <p style="color:#6b7280;">
+                    No trending articles yet.
+                </p>
+
+            {% endfor %}
+
+        </aside>
+
+
+    </div>
+
+</div>
+
+{% endblock %}
