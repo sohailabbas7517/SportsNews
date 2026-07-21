@@ -5,7 +5,11 @@ from django.contrib.auth import get_user_model
 
 
 class Command(BaseCommand):
-    help = "Create or reset the Render admin superuser."
+    help = "Create or update the Render admin superuser."
+
+
+class Command(BaseCommand):
+    help = "Create or update the Render admin superuser."
 
     def handle(self, *args, **options):
         User = get_user_model()
@@ -22,30 +26,41 @@ class Command(BaseCommand):
             )
             return
 
-        user, created = User.objects.get_or_create(
-            username=username,
-            defaults={
-                "is_staff": True,
-                "is_superuser": True,
-                "is_active": True,
-            },
-        )
+        # Find the requested admin by username.
+        user = User.objects.filter(username=username).first()
 
-        user.set_password(password)
-        user.is_staff = True
-        user.is_superuser = True
-        user.is_active = True
-        user.save()
+        if user is None:
+            # If the username does not exist, create the admin.
+            user = User.objects.create_user(
+                username=username,
+                password=password,
+            )
 
-        if created:
             self.stdout.write(
                 self.style.SUCCESS(
                     f"Admin user '{username}' created successfully."
                 )
             )
+
         else:
+            # Existing admin: update password and permissions.
+            user.set_password(password)
+
             self.stdout.write(
                 self.style.SUCCESS(
-                    f"Admin user '{username}' password reset successfully."
+                    f"Admin user '{username}' updated successfully."
                 )
             )
+
+        # Always make sure the configured account has full admin access.
+        user.is_staff = True
+        user.is_superuser = True
+        user.is_active = True
+        user.save(
+            update_fields=[
+                "password",
+                "is_staff",
+                "is_superuser",
+                "is_active",
+            ]
+        )
